@@ -1,0 +1,432 @@
+/* Timeline Tracks Container Styles */
+.timeline-tracks-container {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-fast) ease-out;
+}
+
+/* Time Ruler */
+.timeline-ruler {
+  position: relative;
+  height: 30px;
+  background: var(--color-timeline-ruler);
+  border-bottom: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+.timeline-marks {
+  position: relative;
+  height: 100%;
+}
+
+.timeline-mark {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 4px;
+}
+
+.timeline-mark::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  background: var(--color-text-secondary);
+}
+
+.timeline-mark.minute::before {
+  height: 20px;
+  background: var(--color-text-primary);
+  width: 2px;
+}
+
+.timeline-mark.major::before {
+  height: 15px;
+}
+
+.timeline-mark.minor::before {
+  height: 8px;
+  background: var(--color-text-disabled);
+}
+
+.timeline-mark-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+  margin-left: var(--spacing-xs);
+  white-space: nowrap;
+}
+
+/* Playhead */
+.timeline-playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  z-index: var(--z-playhead);
+  pointer-events: none;
+  transition: opacity var(--transition-fast) ease-out;
+}
+
+.playhead-line {
+  width: 2px;
+  height: 100%;
+  background: var(--color-timeline-playhead);
+  box-shadow: 0 0 4px var(--color-timeline-playhead-shadow);
+}
+
+.playhead-handle {
+  position: absolute;
+  top: -4px;
+  left: -6px;
+  width: 14px;
+  height: 14px;
+  background: var(--color-timeline-playhead);
+  border: 2px solid var(--color-surface);
+  border-radius: 50%;
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-fast) ease-out;
+}
+
+.playhead-handle:hover {
+  transform: scale(1.1);
+}
+
+/* Tracks Container */
+.tracks-container {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+}
+
+/* Track Wrapper */
+.track-wrapper {
+  display: flex;
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color var(--transition-fast) ease-out;
+}
+
+.track-wrapper:last-child {
+  border-bottom: none;
+}
+
+.track-wrapper:hover {
+  background-color: var(--color-surface-hover);
+}
+
+/* Track Header */
+.track-header {
+  width: 120px;
+  min-width: 120px;
+  background: var(--color-surface-elevated);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  transition: background-color var(--transition-fast) ease-out;
+}
+
+.track-label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  width: 100%;
+}
+
+.track-name {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.track-controls {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.track-control-btn {
+  padding: var(--spacing-2xs);
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast) ease-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.track-control-btn:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text-primary);
+  transform: scale(1.05);
+}
+
+.track-control-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Track Content */
+.track-content {
+  flex: 1;
+  position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* Main Track Styling */
+.main-track-wrapper .track-header {
+  background: var(--color-timeline-main-header);
+  border-right-color: var(--color-primary);
+}
+
+.main-track-wrapper .track-name {
+  color: var(--color-primary);
+}
+
+.main-track {
+  background: var(--color-surface);
+  border-bottom: 2px solid var(--color-primary);
+}
+
+.main-track .timeline-track {
+  background: var(--color-timeline-main-track);
+}
+
+/* Overlay Track Styling */
+.overlay-track-wrapper .track-header {
+  background: var(--color-timeline-overlay-header);
+  border-right-color: var(--color-warning);
+}
+
+.overlay-track-wrapper .track-name {
+  color: var(--color-warning);
+}
+
+.overlay-track {
+  background: var(--color-surface);
+  border-bottom: 2px dashed var(--color-warning);
+}
+
+.overlay-track .timeline-track {
+  background: var(--color-timeline-overlay-track);
+}
+
+/* Timeline Track Styles */
+.timeline-track {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  cursor: crosshair;
+  transition: background-color var(--transition-fast) ease-out;
+}
+
+.timeline-track.main-track {
+  background: var(--color-timeline-main-track);
+}
+
+.timeline-track.overlay-track {
+  background: var(--color-timeline-overlay-track);
+}
+
+/* Clips Container */
+.clips-container {
+  position: relative;
+  height: 100%;
+  min-height: 60px;
+}
+
+.main-clips {
+  background: transparent;
+}
+
+.overlay-clips {
+  background: transparent;
+}
+
+/* Drop Zones */
+.track-drop-zone {
+  opacity: 0;
+  transition: 
+    opacity var(--transition-fast) ease-out,
+    background-color var(--transition-fast) ease-out;
+  z-index: 1;
+  border-radius: var(--border-radius-sm);
+}
+
+.track-drop-zone.drag-over {
+  opacity: 1;
+  background: var(--color-primary-alpha);
+  border: 2px dashed var(--color-primary);
+}
+
+.main-track .track-drop-zone:hover {
+  background-color: var(--color-primary-alpha);
+  border: 2px dashed var(--color-primary);
+}
+
+.overlay-track .track-drop-zone:hover {
+  background-color: var(--color-warning-alpha);
+  border: 2px dashed var(--color-warning);
+}
+
+.overlay-drop-zone.drag-over {
+  background: var(--color-warning-alpha);
+  border: 2px dashed var(--color-warning);
+}
+
+/* Clip Styling Enhancements */
+.clip.main-clip {
+  background: var(--color-timeline-main-clip);
+  border: 1px solid var(--color-primary);
+  color: white;
+  border-radius: var(--border-radius-sm);
+  transition: 
+    background var(--transition-fast) ease-out,
+    box-shadow var(--transition-fast) ease-out,
+    transform var(--transition-fast) ease-out;
+}
+
+.clip.main-clip:hover {
+  background: var(--color-primary);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+.clip.main-clip.selected {
+  box-shadow: 0 0 0 3px var(--color-primary-alpha);
+}
+
+.clip.overlay-clip {
+  background: var(--color-timeline-overlay-clip);
+  border: 1px solid var(--color-warning);
+  color: white;
+  border-radius: var(--border-radius-sm);
+  transition: 
+    background var(--transition-fast) ease-out,
+    box-shadow var(--transition-fast) ease-out,
+    transform var(--transition-fast) ease-out;
+}
+
+.clip.overlay-clip:hover {
+  background: var(--color-warning);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+.clip.overlay-clip.selected {
+  box-shadow: 0 0 0 3px var(--color-warning-alpha);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .track-header {
+    width: 80px;
+    min-width: 80px;
+    padding: 6px 8px;
+  }
+  
+  .track-name {
+    font-size: 10px;
+  }
+  
+  .timeline-mark-label {
+    font-size: 10px;
+  }
+}
+
+/* Scrollbar Styling */
+.track-content::-webkit-scrollbar {
+  height: 8px;
+}
+
+.track-content::-webkit-scrollbar-track {
+  background: var(--color-surface-elevated);
+  border-radius: var(--border-radius-sm);
+}
+
+.track-content::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--border-radius-sm);
+  transition: background-color var(--transition-fast) ease-out;
+}
+
+.track-content::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-secondary);
+}
+
+/* Dark Mode Adjustments */
+@media (prefers-color-scheme: dark) {
+  .timeline-tracks-container {
+    background: var(--color-surface);
+    border-color: var(--color-border);
+  }
+
+  .timeline-ruler {
+    background: var(--color-timeline-ruler);
+  }
+
+  .tracks-container {
+    background: var(--color-surface);
+  }
+
+  .track-header {
+    background: var(--color-surface-elevated);
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .timeline-tracks-container,
+  .track-wrapper {
+    border-width: 2px;
+  }
+
+  .clip.main-clip,
+  .clip.overlay-clip {
+    border-width: 2px;
+    font-weight: var(--font-weight-semibold);
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .timeline-tracks-container,
+  .timeline-playhead,
+  .playhead-handle,
+  .track-wrapper,
+  .track-header,
+  .track-control-btn,
+  .timeline-track,
+  .track-drop-zone,
+  .clip.main-clip,
+  .clip.overlay-clip,
+  .track-content::-webkit-scrollbar-thumb {
+    transition: none;
+  }
+
+  .clip.main-clip:hover,
+  .clip.overlay-clip:hover {
+    transform: none;
+  }
+
+  .playhead-handle:hover {
+    transform: none;
+  }
+
+  .track-control-btn:hover {
+    transform: none;
+  }
+}

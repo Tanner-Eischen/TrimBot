@@ -1,0 +1,236 @@
+/**
+ * Operation Progress Modal Styles
+ * Styles for FFmpeg operation progress display
+ */
+
+.operation-progress-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+  animation: fadeIn 200ms ease-in-out;
+}
+
+.operation-progress-container {
+  background-color: var(--color-bg-panel, #222c15);
+  border: 1px solid var(--color-border-primary, #394922);
+  border-radius: var(--radius-lg, 12px);
+  padding: var(--space-2xl, 24px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  min-width: 320px;
+  max-width: 500px;
+  animation: slideUp 300ms ease-out;
+}
+
+.operation-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-xl, 16px);
+  gap: var(--space-md, 8px);
+}
+
+.operation-progress-header h3 {
+  margin: 0;
+  font-size: var(--font-size-lg, 1.125rem);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--color-text-primary, #ffffff);
+}
+
+.operation-progress-close {
+  background: transparent;
+  border: none;
+  color: var(--color-text-primary, #ffffff);
+  cursor: pointer;
+  padding: var(--space-sm, 4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md, 8px);
+  transition: background-color var(--transition-base, 200ms ease-in-out);
+}
+
+.operation-progress-close:hover:not(:disabled) {
+  background-color: var(--color-bg-input-hover, #4a5a2e);
+}
+
+.operation-progress-close:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.operation-progress-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg, 12px);
+  margin-bottom: var(--space-lg, 12px);
+}
+
+/* Progress Bar Container */
+.operation-progress-bar-container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md, 8px);
+}
+
+.operation-progress-bar {
+  flex: 1;
+  height: 8px;
+  background-color: var(--color-bg-input, #394922);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--color-border-primary, #394922);
+}
+
+.operation-progress-fill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary, #96f20d),
+    var(--color-primary-light, #b3ff4d)
+  );
+  transition: width 300ms ease-out;
+  border-radius: 4px;
+}
+
+.operation-progress-percentage {
+  min-width: 40px;
+  text-align: right;
+  font-size: var(--font-size-sm, 0.875rem);
+  color: var(--color-text-secondary, #b3cb90);
+  font-weight: var(--font-weight-medium, 500);
+}
+
+/* Indeterminate Progress Bar */
+.operation-progress-indeterminate {
+  flex: 1;
+  height: 8px;
+  background-color: var(--color-bg-input, #394922);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--color-border-primary, #394922);
+  position: relative;
+}
+
+.operation-progress-animated-bar {
+  height: 100%;
+  width: 30%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-primary, #96f20d),
+    transparent
+  );
+  animation: progress-animate 1.5s ease-in-out infinite;
+  border-radius: 4px;
+}
+
+@keyframes progress-animate {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
+}
+
+/* Sub Message */
+.operation-progress-submessage {
+  margin: 0;
+  font-size: var(--font-size-sm, 0.875rem);
+  color: var(--color-text-secondary, #b3cb90);
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* Cancel Button */
+.operation-progress-cancel-btn {
+  padding: var(--space-md, 8px) var(--space-lg, 12px);
+  background-color: var(--color-bg-input, #394922);
+  border: 1px solid var(--color-border-secondary, #526831);
+  color: var(--color-text-primary, #ffffff);
+  border-radius: var(--radius-md, 8px);
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: var(--font-weight-medium, 500);
+  cursor: pointer;
+  transition: all var(--transition-base, 200ms ease-in-out);
+}
+
+.operation-progress-cancel-btn:hover:not(:disabled) {
+  background-color: var(--color-bg-input-hover, #4a5a2e);
+  border-color: var(--color-border-primary, #394922);
+}
+
+.operation-progress-cancel-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Status Text */
+.operation-progress-status {
+  text-align: center;
+  font-size: var(--font-size-xs, 0.75rem);
+  color: var(--color-text-secondary, #b3cb90);
+  height: 20px;
+}
+
+.status-canceling {
+  color: #ffb800;
+  font-weight: var(--font-weight-semibold, 600);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.status-processing,
+.status-indeterminate {
+  color: var(--color-primary, #96f20d);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .operation-progress-container {
+    min-width: 280px;
+    max-width: 90vw;
+    padding: var(--space-lg, 12px);
+  }
+
+  .operation-progress-header h3 {
+    font-size: var(--font-size-md, 1rem);
+  }
+}

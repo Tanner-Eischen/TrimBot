@@ -1,0 +1,186 @@
+/* Card Component Styles - Alpine Graphite Neon */
+
+.card {
+  /* Base styles */
+  background: var(--color-surface-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Card Variants */
+.card--default {
+  box-shadow: var(--elevation-e1);
+}
+
+.card--elevated {
+  box-shadow: var(--elevation-e2);
+  
+  &:hover {
+    box-shadow: var(--elevation-e3);
+    transform: translateY(-2px);
+  }
+}
+
+.card--outlined {
+  background: transparent;
+  border: 2px solid var(--color-border-secondary);
+  box-shadow: none;
+  
+  &:hover {
+    border-color: var(--color-border-tertiary);
+    background: var(--color-surface-secondary);
+  }
+}
+
+.card--glass {
+  background: rgba(25, 30, 40, 0.18);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  
+  &:hover {
+    background: rgba(30, 35, 45, 0.25);
+    border-color: rgba(0, 255, 136, 0.3);
+    box-shadow: 
+      0 16px 50px rgba(0, 0, 0, 0.4),
+      0 0 20px rgba(0, 255, 136, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* Card Padding */
+.card--padding-none {
+  padding: 0;
+}
+
+.card--padding-sm {
+  padding: 12px;
+}
+
+.card--padding-md {
+  padding: 20px;
+}
+
+.card--padding-lg {
+  padding: 32px;
+}
+
+/* Card Header */
+.card-header {
+  padding: 20px 20px 16px 20px;
+  border-bottom: 1px solid var(--color-border-primary);
+  background: var(--color-surface-tertiary);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  margin: -20px -20px 20px -20px;
+}
+
+.card--padding-sm .card-header {
+  padding: 12px 12px 8px 12px;
+  margin: -12px -12px 12px -12px;
+}
+
+.card--padding-lg .card-header {
+  padding: 32px 32px 24px 32px;
+  margin: -32px -32px 32px -32px;
+}
+
+.card--padding-none .card-header {
+  padding: 20px;
+  margin: 0 0 20px 0;
+  border-radius: 0;
+}
+
+/* Card Content */
+.card-content {
+  flex: 1;
+  color: var(--color-text-primary);
+  line-height: 1.6;
+}
+
+.card-content:not(:last-child) {
+  margin-bottom: 16px;
+}
+
+/* Card Footer */
+.card-footer {
+  padding: 16px 20px 20px 20px;
+  border-top: 1px solid var(--color-border-primary);
+  background: var(--color-surface-tertiary);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  margin: 20px -20px -20px -20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.card--padding-sm .card-footer {
+  padding: 8px 12px 12px 12px;
+  margin: 12px -12px -12px -12px;
+}
+
+.card--padding-lg .card-footer {
+  padding: 24px 32px 32px 32px;
+  margin: 32px -32px -32px -32px;
+}
+
+.card--padding-none .card-footer {
+  padding: 20px;
+  margin: 20px 0 0 0;
+  border-radius: 0;
+}
+
+/* Interactive Cards */
+.card[role="button"],
+.card.card--interactive {
+  cursor: pointer;
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--elevation-e2);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.card--elevated[role="button"],
+.card--elevated.card--interactive {
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--elevation-e3);
+  }
+}
+
+/* Focus styles for interactive cards */
+.card[role="button"]:focus,
+.card.card--interactive:focus {
+  outline: 2px solid var(--color-accent-primary);
+  outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+  
+  .card:hover,
+  .card[role="button"]:hover,
+  .card.card--interactive:hover {
+    transform: none;
+  }
+  
+  .card:active,
+  .card[role="button"]:active,
+  .card.card--interactive:active {
+    transform: none;
+  }
+}

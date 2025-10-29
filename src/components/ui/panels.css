@@ -1,0 +1,526 @@
+/* Panel Components Styles */
+
+/* Base Panel */
+.panel {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: 
+    box-shadow var(--transition-fast) ease-out,
+    border-color var(--transition-fast) ease-out;
+}
+
+.panel:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Panel Header */
+.panel-header {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-surface-elevated);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.panel-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: var(--line-height-tight);
+}
+
+.panel-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: var(--line-height-normal);
+}
+
+.panel-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/* Panel Content */
+.panel-content {
+  padding: var(--spacing-lg);
+}
+
+.panel-content--compact {
+  padding: var(--spacing-md);
+}
+
+.panel-content--spacious {
+  padding: var(--spacing-xl);
+}
+
+/* Panel Footer */
+.panel-footer {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-surface-elevated);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+}
+
+.panel-footer--space-between {
+  justify-content: space-between;
+}
+
+/* Panel Variants */
+.panel--elevated {
+  box-shadow: var(--shadow-lg);
+  border: none;
+}
+
+.panel--flat {
+  box-shadow: none;
+  border: 1px solid var(--color-border);
+}
+
+.panel--outlined {
+  background-color: transparent;
+  border: 2px solid var(--color-border);
+  box-shadow: none;
+}
+
+.panel--primary {
+  border-color: var(--color-primary);
+}
+
+.panel--primary .panel-header {
+  background-color: var(--color-primary);
+  color: white;
+  border-bottom-color: var(--color-primary);
+}
+
+.panel--primary .panel-title {
+  color: white;
+}
+
+.panel--success {
+  border-color: var(--color-success);
+}
+
+.panel--success .panel-header {
+  background-color: var(--color-success-light);
+  border-bottom-color: var(--color-success);
+}
+
+.panel--warning {
+  border-color: var(--color-warning);
+}
+
+.panel--warning .panel-header {
+  background-color: var(--color-warning-light);
+  border-bottom-color: var(--color-warning);
+}
+
+.panel--danger {
+  border-color: var(--color-danger);
+}
+
+.panel--danger .panel-header {
+  background-color: var(--color-danger-light);
+  border-bottom-color: var(--color-danger);
+}
+
+/* Collapsible Panel */
+.panel--collapsible .panel-header {
+  cursor: pointer;
+  user-select: none;
+}
+
+.panel--collapsible .panel-header:hover {
+  background-color: var(--color-surface-hover);
+}
+
+.panel-collapse-icon {
+  transition: transform var(--transition-fast) ease-out;
+}
+
+.panel--collapsed .panel-collapse-icon {
+  transform: rotate(-90deg);
+}
+
+.panel-content--collapsible {
+  transition: 
+    max-height var(--transition-normal) ease-out,
+    opacity var(--transition-fast) ease-out;
+  overflow: hidden;
+}
+
+.panel--collapsed .panel-content--collapsible {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Sidebar Panel */
+.sidebar-panel {
+  width: 280px;
+  height: 100%;
+  background-color: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-panel--left {
+  border-right: 1px solid var(--color-border);
+  border-left: none;
+}
+
+.sidebar-panel--right {
+  border-left: 1px solid var(--color-border);
+  border-right: none;
+}
+
+.sidebar-panel-header {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-surface-elevated);
+  flex-shrink: 0;
+}
+
+.sidebar-panel-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-sm);
+}
+
+.sidebar-panel-footer {
+  padding: var(--spacing-md);
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-surface-elevated);
+  flex-shrink: 0;
+}
+
+/* Resizable Panel */
+.resizable-panel {
+  position: relative;
+}
+
+.panel-resize-handle {
+  position: absolute;
+  background-color: var(--color-border);
+  transition: background-color var(--transition-fast) ease-out;
+}
+
+.panel-resize-handle:hover,
+.panel-resize-handle--active {
+  background-color: var(--color-primary);
+}
+
+.panel-resize-handle--horizontal {
+  width: 100%;
+  height: 4px;
+  cursor: ns-resize;
+}
+
+.panel-resize-handle--vertical {
+  width: 4px;
+  height: 100%;
+  cursor: ew-resize;
+}
+
+.panel-resize-handle--top {
+  top: -2px;
+  left: 0;
+}
+
+.panel-resize-handle--bottom {
+  bottom: -2px;
+  left: 0;
+}
+
+.panel-resize-handle--left {
+  left: -2px;
+  top: 0;
+}
+
+.panel-resize-handle--right {
+  right: -2px;
+  top: 0;
+}
+
+/* Split Panel */
+.split-panel {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+.split-panel--vertical {
+  flex-direction: column;
+}
+
+.split-panel-pane {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.split-panel-divider {
+  background-color: var(--color-border);
+  flex-shrink: 0;
+  position: relative;
+  transition: background-color var(--transition-fast) ease-out;
+}
+
+.split-panel-divider:hover,
+.split-panel-divider--active {
+  background-color: var(--color-primary);
+}
+
+.split-panel--horizontal .split-panel-divider {
+  width: 4px;
+  cursor: ew-resize;
+}
+
+.split-panel--vertical .split-panel-divider {
+  height: 4px;
+  cursor: ns-resize;
+}
+
+/* Tabbed Panel */
+.tabbed-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.tab-list {
+  display: flex;
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-surface-elevated);
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+
+.tab-button {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: none;
+  background: none;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: 
+    color var(--transition-fast) ease-out,
+    border-color var(--transition-fast) ease-out,
+    background-color var(--transition-fast) ease-out;
+  white-space: nowrap;
+  position: relative;
+}
+
+.tab-button:hover {
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-hover);
+}
+
+.tab-button--active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.tab-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
+
+.tab-content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.tab-panel {
+  height: 100%;
+  overflow: auto;
+  padding: var(--spacing-lg);
+}
+
+.tab-panel--hidden {
+  display: none;
+}
+
+/* Floating Panel */
+.floating-panel {
+  position: fixed;
+  z-index: var(--z-modal);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-xl);
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: hidden;
+}
+
+.floating-panel--draggable {
+  cursor: move;
+}
+
+.floating-panel--draggable .panel-header {
+  cursor: move;
+}
+
+/* Accordion Panel */
+.accordion {
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+}
+
+.accordion-item {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.accordion-item:last-child {
+  border-bottom: none;
+}
+
+.accordion-header {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--color-surface-elevated);
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background-color var(--transition-fast) ease-out;
+}
+
+.accordion-header:hover {
+  background-color: var(--color-surface-hover);
+}
+
+.accordion-title {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.accordion-icon {
+  transition: transform var(--transition-fast) ease-out;
+}
+
+.accordion-item--expanded .accordion-icon {
+  transform: rotate(180deg);
+}
+
+.accordion-content {
+  padding: var(--spacing-lg);
+  background-color: var(--color-surface);
+  transition: 
+    max-height var(--transition-normal) ease-out,
+    opacity var(--transition-fast) ease-out;
+  overflow: hidden;
+}
+
+.accordion-item--collapsed .accordion-content {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Dark Mode Adjustments */
+@media (prefers-color-scheme: dark) {
+  .panel,
+  .sidebar-panel,
+  .floating-panel,
+  .accordion {
+    background-color: var(--color-surface);
+    border-color: var(--color-border);
+  }
+
+  .panel-header,
+  .sidebar-panel-header,
+  .sidebar-panel-footer,
+  .tab-list,
+  .accordion-header {
+    background-color: var(--color-surface-elevated);
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .panel,
+  .sidebar-panel,
+  .floating-panel,
+  .accordion {
+    border-width: 2px;
+  }
+
+  .panel-header,
+  .panel-footer,
+  .sidebar-panel-header,
+  .sidebar-panel-footer {
+    border-width: 2px;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .panel-collapse-icon,
+  .panel-content--collapsible,
+  .panel-resize-handle,
+  .split-panel-divider,
+  .tab-button,
+  .accordion-header,
+  .accordion-icon,
+  .accordion-content {
+    transition: none;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sidebar-panel {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .panel-content,
+  .tab-panel,
+  .accordion-content {
+    padding: var(--spacing-md);
+  }
+
+  .panel-header,
+  .panel-footer,
+  .sidebar-panel-header,
+  .sidebar-panel-footer {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .floating-panel {
+    max-width: 95vw;
+    max-height: 95vh;
+  }
+
+  .tab-list {
+    overflow-x: auto;
+  }
+
+  .tab-button {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-xs);
+  }
+}

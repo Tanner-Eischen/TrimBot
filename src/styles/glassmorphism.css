@@ -1,0 +1,146 @@
+/* Glassmorphism Effects for Alpine Graphite Neon Theme */
+
+/* Base Glass Effect Classes */
+.glass {
+  background: var(--glass-background);
+  backdrop-filter: var(--glass-backdrop-blur);
+  -webkit-backdrop-filter: var(--glass-backdrop-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-surface {
+  background: rgba(20, 25, 35, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.glass-elevated {
+  background: rgba(30, 35, 45, 0.2);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: var(--shadow-elevated);
+}
+
+.glass-floating {
+  background: rgba(25, 30, 40, 0.1);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  box-shadow: var(--shadow-floating);
+}
+
+/* Glass Panel Variants */
+.glass-panel {
+  background: rgba(20, 25, 35, 0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.glass-card {
+  background: rgba(25, 30, 40, 0.18);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--border-radius-xl);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.glass-modal {
+  background: rgba(15, 20, 30, 0.25);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--border-radius-xl);
+  box-shadow: 
+    0 24px 80px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(0, 255, 136, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Interactive Glass States */
+.glass-interactive {
+  transition: all var(--transition-normal);
+  cursor: pointer;
+}
+
+.glass-interactive:hover {
+  background: rgba(30, 35, 45, 0.25);
+  border-color: rgba(0, 255, 136, 0.3);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(0, 255, 136, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.glass-interactive:active {
+  background: rgba(35, 40, 50, 0.3);
+  transform: translateY(1px);
+}
+
+/* Neon Accent Glass */
+.glass-neon {
+  background: rgba(20, 25, 35, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(0, 255, 136, 0.3),
+    inset 0 1px 0 rgba(0, 255, 136, 0.1);
+}
+
+.glass-neon-glow {
+  background: rgba(25, 30, 40, 0.2);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(0, 255, 136, 0.4);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 0 40px rgba(0, 255, 136, 0.5),
+    inset 0 1px 0 rgba(0, 255, 136, 0.15);
+}
+
+/* Timeline Glass Effects */
+.glass-timeline {
+  background: rgba(10, 10, 15, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.glass-timeline-track {
+  background: rgba(30, 35, 45, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Utility Classes */
+.backdrop-blur-sm { backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.backdrop-blur-md { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.backdrop-blur-lg { backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.backdrop-blur-xl { backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
+.backdrop-blur-2xl { backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); }
+
+/* Neon Glow Utilities */
+.neon-glow { box-shadow: var(--neon-glow-primary); }
+.neon-glow-secondary { box-shadow: var(--neon-glow-secondary); }
+.neon-glow-strong { box-shadow: var(--neon-shadow-strong); }
+.neon-text { text-shadow: var(--neon-text-shadow); }

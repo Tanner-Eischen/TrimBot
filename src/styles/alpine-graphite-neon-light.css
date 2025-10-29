@@ -1,0 +1,14 @@
+/* Alpine Graphite Neon - Light Theme */
+[data-theme="light"] {
+  --bg: #f2f2f1;
+  --surface: #e7e6e4;
+  --surface-2: #d5d5d5;
+  --text: #0c0e12;
+  --muted: #7b7569;
+  --accent: #645d51;
+  --accent-2: #645d51;
+  --border: #4c4c45;
+  --success: #27c93f;
+  --warning: #ffcc00;
+  --danger: #ff3b30;
+}

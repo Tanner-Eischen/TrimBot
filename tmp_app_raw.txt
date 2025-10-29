@@ -1,0 +1,671 @@
+import { useState, useEffect, useMemo } from 'react';
+import './styles/variables.css';
+import './styles/timeline.css';
+import './styles/timeline-tracks.css';
+import './styles/overlay-inspector.css';
+import ProjectSetup from './components/ProjectSetup';
+import MediaImport from './components/MediaImport';
+// import { Timeline } from './components/Timeline';
+import { TimelineTracksContainer } from './components/timeline/TimelineTracksContainer';
+import { ProjectProvider, useProject } from './contexts/ProjectContext';
+import { useTimeline } from './hooks/useTimeline';
+import { useTimelinePlayback } from './hooks/useTimelinePlayback';
+import { toast, Toaster } from 'sonner';
+import { projectToasts } from './utils/toastMessages';
+import { ZoomIn, ZoomOut, Maximize2, Split, Trash2, Merge, Play, Pause, SkipBack, SkipForward } from 'lucide-react';
+import { LazyMediaLibrary, LazyRecording, LazyExportDialog, LazyComponentErrorBoundary } from './components/LazyComponents';
+import DualVideoPreview from './components/preview/DualVideoPreview';
+import ClipInspector from './components/ClipInspector';
+import OverlayInspector from './components/overlay/OverlayInspector';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { ThemeToggle } from './components/ui/ThemeToggle';
+
+interface Clip {
+  id: string;
+  filename: string;
+  filePath: string;
+  durationSec?: number;
+  width?: number;
+  height?: number;
+}
+
+import type { TimelineItem } from './types';
+
+function AppContent() {
+  const { 
+    project,
+    isLoading,
+    error,
+    createProject, 
+    importFiles, 
+    updateClipDuration,
+    trimClip,
+    addToTimeline,
+    reorderTimeline,
+    // setZoomLevel,
+    setPxPerSec,
+    addToOverlayTrack
+  } = useProject();
+  
+  const [selectedClip, setSelectedClip] = useState<Clip | null>(null);
+  const [activeView, setActiveView] = useState<'timeline' | 'recording'>('timeline');
+  const [showExportDialog, setShowExportDialog] = useState(false);
+  const [showClipInspector, setShowClipInspector] = useState(false);
+  const [showOverlayInspector, setShowOverlayInspector] = useState(false);
+
+  const handleCreateProject = async () => {
+    try {
+      projectToasts.creating();
+      await createProject();
+      projectToasts.created();
+    } catch (err: any) {
+      console.error('Failed to create project:', err);
+      projectToasts.createFailed(err.message);
+    }
+  };
+
+  const handleImportFiles = async (filePaths: string[]) => {
+    try {
+      const newClips = await importFiles(filePaths);
+      console.log('Imported clips:', newClips);
+    } catch (err) {
+      console.error('Failed to import files:', err);
+    }
+  };
+
+  const handleSelectClip = (clip: Clip) => {
+    setSelectedClip(clip);
+  };
+
+  const handleDurationProbed = (clipId: string, duration: number, width: number, height: number) => {
+    updateClipDuration(clipId, duration, width, height);
+  };
+
+  const handleAddToTimeline = (clip: Clip) => {
+    // Convert Clip to TimelineItem
+    const timelineItem: TimelineItem = {
+      id: clip.id,
+      name: clip.filename,
+      durationSec: clip.durationSec || 0,
+      startTime: 0, // Will be set by addToTimeline
+      xPx: 0,
+      wPx: 0,
+      type: 'video',
+      path: clip.filePath,
+      selected: false,
+      filename: clip.filename
+    };
+    addToTimeline(timelineItem);
+  };
+
+  const handleAddToOverlayTrack = (clip: Clip) => {
+    // Convert Clip to TimelineItem for overlay track
+    const timelineItem: TimelineItem = {
+      id: clip.id,
+      name: clip.filename,
+      durationSec: clip.durationSec || 0,
+      startTime: 0, // Will be set by addToOverlayTrack
+      xPx: 0,
+      wPx: 0,
+      type: 'video',
+      path: clip.filePath,
+      selected: false,
+      filename: clip.filename,
+      trackType: 'overlay',
+      // Overlay-specific properties
+      overlayProperties: {
+        position: { x: 0.7, y: 0.05 }, // Top-right corner by default
+        scale: 0.3, // 30% of original size
+        opacity: 1.0,
+        includeAudio: false // Mute overlay by default
+      }
+    };
+    addToOverlayTrack(timelineItem);
+  };
+
+  const handleTrimClip = async (clipId: string, startTime: number, endTime: number) => {
+    try {
+      const trimmedClip = await trimClip(clipId, startTime, endTime);
+      console.log('Trimmed clip created:', trimmedClip);
+      return trimmedClip;
+    } catch (err) {
+      console.error('Failed to trim clip:', err);
+      throw err;
+    }
+  };
+
+  const handleRecordingComplete = async (filename: string, filePath: string) => {
+    try {
+      // Import the recorded file to the library
+      await importFiles([filePath]);
+      console.log('Recording imported to library:', filename);
+    } catch (err) {
+      console.error('Failed to import recording:', err);
+    }
+  };
+
+  // Convert library object to array for timeline - memoize to prevent infinite loops
+  const timelineClips = useMemo(() => project?.timeline || [], [project?.timeline]);
+  const libraryClips = useMemo(() => Object.values(project?.library || {}), [project?.library]);
+
+  // Use timeline hook for advanced timeline functionality
+  const {
+    timelineItems,
+    currentTime,
+    setCurrentTime,
+    handleItemMove,
+    handleItemResize,
+    handleItemSelect,
+    handleSplitAtPlayhead,
+    handleRippleDelete,
+    handleMergeAdjacent,
+    selectedItemId
+  } = useTimeline({
+    timelineData: timelineClips,
+    pxPerSec: project?.pxPerSec || 50
+  });
+
+  // Handle timeline item selection and show inspector
+  const handleTimelineItemSelect = (itemId: string) => {
+    handleItemSelect(itemId);
+    
+    // Check if the selected item is on the overlay track
+    const selectedItem = timelineItems.find(item => item.id === itemId);
+    if (selectedItem && 'overlayProperties' in selectedItem && selectedItem.overlayProperties) {
+      setShowOverlayInspector(true);
+    } else {
+      setShowClipInspector(true);
+    }
+  };
+
+  // Use timeline playback hook for continuous playback
+  const {
+    isPlaying,
+    playbackRate,
+    totalDuration,
+    play,
+    pause,
+    seekTo: seek,
+    setPlaybackRate,
+    // findClipAtTime
+  } = useTimelinePlayback({
+    timelineItems,
+    onTimeUpdate: setCurrentTime
+  });
+
+  // Zoom controls
+  const handleZoomIn = () => {
+    const currentPxPerSec = project?.pxPerSec || 50;
+    const newZoom = Math.min(currentPxPerSec * 1.5, 200);
+    setPxPerSec(newZoom);
+  };
+
+  const handleZoomOut = () => {
+    const currentPxPerSec = project?.pxPerSec || 50;
+    const newZoom = Math.max(currentPxPerSec / 1.5, 10);
+    setPxPerSec(newZoom);
+  };
+
+  const handleFitToView = () => {
+    if (timelineItems.length === 0) return;
+    
+    const maxEndTime = timelineItems.reduce((max, item) => {
+      return Math.max(max, item.startTime + item.durationSec);
+    }, 0);
+    
+    const viewportWidth = 800; // Approximate timeline viewport width
+    const optimalZoom = Math.max(10, Math.min(200, viewportWidth / maxEndTime));
+    setPxPerSec(optimalZoom);
+  };
+
+  // Split at playhead action with error handling
+  const handleSplitAtPlayheadAction = async () => {
+    if (!selectedItemId) {
+      toast.error('Please select a clip to split');
+      return;
+    }
+
+    try {
+      await handleSplitAtPlayhead(selectedItemId);
+      toast.success('Clip split successfully');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to split clip');
+    }
+  };
+
+  // Ripple delete action
+  const handleRippleDeleteAction = () => {
+    if (!selectedItemId) {
+      toast.error('Please select a clip to delete');
+      return;
+    }
+
+    handleRippleDelete(selectedItemId);
+    toast.success('Clip deleted and timeline compacted');
+  };
+
+  // Merge adjacent clips action
+  const handleMergeAdjacentAction = async () => {
+    const selectedItem = timelineItems.find(item => item.id === selectedItemId);
+    if (!selectedItem) {
+      toast.error('Please select a clip to merge');
+      return;
+    }
+
+    // Find adjacent clip (next clip that starts right after this one ends)
+    const adjacentItem = timelineItems.find(item => 
+      Math.abs(item.startTime - (selectedItem.startTime + selectedItem.durationSec)) < 0.01
+    );
+
+    if (!adjacentItem) {
+      toast.error('No adjacent clip found to merge with');
+      return;
+    }
+
+    try {
+      await handleMergeAdjacent(selectedItemId!, adjacentItem.id);
+      toast.success('Clips merged successfully');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to merge clips');
+    }
+  };
+
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only handle shortcuts when timeline is active
+      if (activeView !== 'timeline') return;
+
+      switch (e.key.toLowerCase()) {
+        case ' ':
+          e.preventDefault();
+          if (isPlaying) {
+            pause();
+          } else {
+            play();
+          }
+          break;
+        case 'j':
+          e.preventDefault();
+          seek(Math.max(0, currentTime - 1));
+          break;
+        case 'k':
+          e.preventDefault();
+          if (isPlaying) {
+            pause();
+          } else {
+            play();
+          }
+          break;
+        case 'l':
+          e.preventDefault();
+          seek(Math.min(totalDuration, currentTime + 1));
+          break;
+        case 'arrowleft':
+          e.preventDefault();
+          seek(Math.max(0, currentTime - (e.shiftKey ? 5 : 1)));
+          break;
+        case 'arrowright':
+          e.preventDefault();
+          seek(Math.min(totalDuration, currentTime + (e.shiftKey ? 5 : 1)));
+          break;
+        case 'home':
+          e.preventDefault();
+          seek(0);
+          break;
+        case 'end':
+          e.preventDefault();
+          seek(totalDuration);
+          break;
+        case 's':
+          if (selectedItemId) {
+            e.preventDefault();
+            handleSplitAtPlayheadAction();
+          }
+          break;
+        case 'delete':
+        case 'backspace':
+          if (selectedItemId) {
+            e.preventDefault();
+            handleRippleDeleteAction();
+          }
+          break;
+        case '=':
+        case '+':
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            handleZoomIn();
+          }
+          break;
+        case '-':
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            handleZoomOut();
+          }
+          break;
+        case '0':
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            handleFitToView();
+          }
+          break;
+        case '1':
+          e.preventDefault();
+          setPlaybackRate(0.25);
+          break;
+        case '2':
+          e.preventDefault();
+          setPlaybackRate(0.5);
+          break;
+        case '3':
+          e.preventDefault();
+          setPlaybackRate(1);
+          break;
+        case '4':
+          e.preventDefault();
+          setPlaybackRate(1.5);
+          break;
+        case '5':
+          e.preventDefault();
+          setPlaybackRate(2);
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeView, selectedItemId, project?.pxPerSec, timelineItems, isPlaying, currentTime, totalDuration, play, pause, seek, setPlaybackRate]);
+
+  // Show project setup if no project is loaded
+  if (!project?.projectDir) {
+    return (
+      <ProjectSetup 
+        onCreateProject={handleCreateProject}
+        isLoading={isLoading}
+      />
+    );
+  }
+
+  // Handle timeline item changes
+  const handleTimelineItemsChange = (newItems: TimelineItem[]) => {
+    // Convert timeline items back to project timeline format and update
+    const reorderedTimeline = newItems.map(item => {
+      const originalClip = timelineClips.find((clip: any) => clip.id === item.id);
+      return originalClip ? { ...originalClip, startTime: item.startTime } : item;
+    });
+    
+    reorderTimeline(reorderedTimeline);
+  };
+
+  return (
+    <div className="app">
+      <Toaster position="top-right" />
+      
+      {/* Header */}
+      <header className="app-header">
+        <div className="header-left">
+          <h1>TrimBot</h1>
+          <span className="project-name">{project?.projectDir?.split('/').pop() || 'Untitled Project'}</span>
+        </div>
+        
+        <nav className="header-nav">
+          <button 
+            className={`nav-button ${activeView === 'timeline' ? 'active' : ''}`}
+            onClick={() => setActiveView('timeline')}
+          >
+            Timeline
+          </button>
+          <button 
+            className={`nav-button ${activeView === 'recording' ? 'active' : ''}`}
+            onClick={() => setActiveView('recording')}
+          >
+            Recording
+          </button>
+          <button 
+            className="nav-button"
+            onClick={() => setShowExportDialog(true)}
+          >
+            Export
+          </button>
+          <ThemeToggle />
+        </nav>
+      </header>
+
+      {/* Main Content */}
+      <main className="app-main">
+        {activeView === 'timeline' && (
+          <>
+            {/* Media Import */}
+            <section className="media-import-section">
+              <MediaImport onImport={handleImportFiles} />
+            </section>
+
+            {/* Media Library */}
+            <section className="media-library-section">
+              <LazyComponentErrorBoundary>
+                <LazyMediaLibrary 
+                  clips={libraryClips}
+                  onSelectClip={handleSelectClip}
+                  onDurationProbed={handleDurationProbed}
+                  onAddToTimeline={handleAddToTimeline}
+                  onAddToOverlayTrack={handleAddToOverlayTrack}
+                  onTrimClip={handleTrimClip}
+                  selectedClip={selectedClip}
+                />
+              </LazyComponentErrorBoundary>
+            </section>
+
+            {/* Timeline */}
+            <section className="timeline-section">
+              <div className="timeline-header">
+                <h2>Timeline</h2>
+                <div className="timeline-controls">
+                  <div className="playback-controls">
+                    <button 
+                      className="control-button" 
+                      onClick={() => seek(Math.max(0, currentTime - 5))}
+                      title="Skip Back 5s"
+                    >
+                      <SkipBack size={14} />
+                    </button>
+                    <button 
+                      className={`control-button primary ${isPlaying ? 'playing' : ''}`}
+                      onClick={isPlaying ? pause : play}
+                      title={isPlaying ? 'Pause (Space/K)' : 'Play (Space/K)'}
+                    >
+                      {isPlaying ? <Pause size={16} /> : <Play size={16} />}
+                    </button>
+                    <button 
+                      className="control-button" 
+                      onClick={() => seek(Math.min(totalDuration, currentTime + 5))}
+                      title="Skip Forward 5s"
+                    >
+                      <SkipForward size={14} />
+                    </button>
+                    <div className="time-display">
+                      <span className="current-time">
+                        {Math.floor(currentTime / 60)}:{(currentTime % 60).toFixed(1).padStart(4, '0')}
+                      </span>
+                      <span className="time-separator">/</span>
+                      <span className="total-time">
+                        {Math.floor(totalDuration / 60)}:{(totalDuration % 60).toFixed(1).padStart(4, '0')}
+                      </span>
+                    </div>
+                    <div className="playback-rate-controls">
+                      <select 
+                        value={playbackRate} 
+                        onChange={(e) => setPlaybackRate(parseFloat(e.target.value))}
+                        className="playback-rate-select"
+                        title="Playback Speed"
+                      >
+                        <option value={0.25}>0.25x</option>
+                        <option value={0.5}>0.5x</option>
+                        <option value={1}>1x</option>
+                        <option value={1.5}>1.5x</option>
+                        <option value={2}>2x</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="zoom-controls">
+                    <button 
+                      className="control-button" 
+                      onClick={handleZoomOut}
+                      title="Zoom Out (Ctrl+-)"
+                    >
+                      <ZoomOut size={14} />
+                    </button>
+                    <span className="zoom-level">
+                      {Math.round((project?.pxPerSec || 50) / 50 * 100)}%
+                    </span>
+                    <button 
+                      className="control-button" 
+                      onClick={handleZoomIn}
+                      title="Zoom In (Ctrl++)"
+                    >
+                      <ZoomIn size={14} />
+                    </button>
+                    <button 
+                      className="control-button" 
+                      onClick={handleFitToView}
+                      title="Fit to View (Ctrl+0)"
+                    >
+                      <Maximize2 size={14} />
+                    </button>
+                  </div>
+                  
+                  <div className="timeline-actions">
+                    <button 
+                      className="control-button" 
+                      onClick={handleSplitAtPlayheadAction}
+                      disabled={!selectedItemId}
+                      title="Split at Playhead (S)"
+                    >
+                      <Split size={14} />
+                      Split
+                    </button>
+                    <button 
+                      className="control-button" 
+                      onClick={handleMergeAdjacentAction}
+                      disabled={!selectedItemId}
+                      title="Merge Adjacent Clips"
+                    >
+                      <Merge size={14} />
+                      Merge
+                    </button>
+                    <button 
+                      className="control-button danger" 
+                      onClick={handleRippleDeleteAction}
+                      disabled={!selectedItemId}
+                      title="Delete and Compact (Delete)"
+                    >
+                      <Trash2 size={14} />
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <TimelineTracksContainer
+              timelineItems={timelineItems}
+              pxPerSec={project?.pxPerSec || 50}
+              currentTime={currentTime}
+              onTimeChange={setCurrentTime}
+              onItemMove={handleItemMove}
+              onItemResize={handleItemResize}
+              onItemSelect={handleTimelineItemSelect}
+              selectedItemId={selectedItemId}
+              onItemsChange={handleTimelineItemsChange}
+            />
+            </section>
+
+            {/* Video Preview */}
+            <section className="video-preview-section">
+              <LazyComponentErrorBoundary>
+                <DualVideoPreview 
+                  selectedClip={selectedClip}
+                  currentTime={currentTime}
+                  onTimeChange={setCurrentTime}
+                  timelineItems={timelineItems}
+                  isTimelinePlaying={isPlaying}
+                  onTimelinePlayToggle={isPlaying ? pause : play}
+                  onTimelineSeek={seek}
+                  showTimelineControls={timelineItems.length > 0}
+                />
+              </LazyComponentErrorBoundary>
+            </section>
+          </>
+        )}
+
+        {activeView === 'recording' && (
+          <section className="recording-section">
+            <LazyComponentErrorBoundary>
+              <LazyRecording onRecordingComplete={handleRecordingComplete} />
+            </LazyComponentErrorBoundary>
+          </section>
+        )}
+
+        {/* Error Display */}
+        {error && (
+          <div className="error-display">
+            <p>Error: {error}</p>
+          </div>
+        )}
+
+        {/* Progress Status */}
+        <section className="progress-status">
+          <h3>Epic 4 Progress</h3>
+          <ul>
+            <li className={project?.projectDir ? 'completed' : ''}>Project Setup</li>
+            <li className={libraryClips.length > 0 ? 'completed' : ''}>File Import</li>
+            <li className={timelineClips.length > 0 ? 'completed' : ''}>Timeline</li>
+            <li>Export</li>
+            <li>Screen Record</li>
+            <li>Webcam Record</li>
+          </ul>
+        </section>
+      </main>
+
+      {/* Clip Inspector */}
+        {showClipInspector && selectedItemId && (
+          <ClipInspector
+            clipId={selectedItemId}
+            onClose={() => setShowClipInspector(false)}
+          />
+        )}
+
+        {/* Overlay Inspector */}
+        {showOverlayInspector && selectedItemId && (
+          <OverlayInspector
+            itemId={selectedItemId}
+            onClose={() => setShowOverlayInspector(false)}
+          />
+        )}
+
+        {/* Export Dialog */}
+        {showExportDialog && (
+          <LazyComponentErrorBoundary>
+            <LazyExportDialog
+              isOpen={showExportDialog}
+              onClose={() => setShowExportDialog(false)}
+              timelineClips={timelineClips}
+              projectDir={project?.projectDir}
+            />
+          </LazyComponentErrorBoundary>
+        )}
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <ProjectProvider>
+        <AppContent />
+      </ProjectProvider>
+    </ThemeProvider>
+  );
+}
+

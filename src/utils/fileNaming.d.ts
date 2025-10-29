@@ -1,0 +1,2 @@
+export declare function generateTrimmedClipName(originalName: string, startTime: number, endTime: number): string;
+export declare function generateImportedFileName(originalName: string, clipId?: string): string;
